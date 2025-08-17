@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.venv/
+.env
+.ipynb_checkpoints/
+.pytest_cache/
+.cache/
+
+# VS Code
+.vscode/
+*.code-workspace
+# Data
+data/raw/*
+data/processed/*
+data/external/*
+!data/**/.gitkeep
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.parquet
+*.json
+*.pkl
+*.h5
+*.db
+*.sqlite
+*.log
+# OS
+.DS_Store
+Thumbs.db
