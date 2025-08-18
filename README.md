@@ -1,80 +1,162 @@
 # Trip Duration Prediction
 
-هدف المشروع: التنبؤ بمدة الرحلة (بالثواني) اعتمادًا على معطيات مثل الإحداثيات ووقت الانطلاق وعدد الركاب… إلخ.
+## Goal
 
-## لماذا الهيكلة دي؟
-- تفصل بين البيانات الخام والمعالجة والكود.
-- تسهّل الشغل على VS Code وجيت من أول يوم.
-- تخلي التطوير خطوة بخطوة وواضح (EDA → Feature Engineering → Modeling).
+Predict trip duration (seconds) using features like pickup/dropoff coordinates, start time, and passenger count.  
+Target variable: `trip_duration` (in seconds).
 
-## هيكلة المجلدات
-```
-trip-duration-prediction/
-├── config/
-│   └── params.yaml                # إعدادات عامة/بارامترات (تملأها لاحقًا)
-├── data/
-│   ├── raw/                       # البيانات الخام (لا تُعدّل)
-│   ├── processed/                 # بيانات بعد التنظيف/الاشتقاق
-│   └── external/                  # أي بيانات إضافية (طقس/خرائط…)
-├── notebooks/
-│   └── 01_eda_trip_duration.ipynb # نوتبوك الاستكشاف الأول
-├── src/
-│   ├── data/                      # كود التحميل/التقسيم/التحقق من البيانات
-│   ├── features/                  # توليد الميزات (المسافات/الوقت…)
-│   ├── models/                    # تدريب وتقييم النماذج
-│   └── visualization/             # دوال مساعدة للرسم أثناء الـEDA
-├── scripts/                       # سكربتات تشغيل سريعة (اختياري)
-├── tests/                         # اختبارات بسيطة لوظائفك
-├── .gitignore
-├── Makefile
-├── requirements.txt
-└── README.md
-```
+## 🔰 Start Here (Open in this order)
 
-## خطوات البدء السريع (VS Code + Git)
-1) **إنشاء بيئة عمل**:
-```bash
+1. This file `README.md` – 2-minute overview.  
+2. EDA notebook: `notebooks/01_Trip Duration EDA.ipynb`  
+   Run top-to-bottom. It loads data from `data/raw/` and performs sanity checks, profiling, and first plots.  
+3. (Optional) Feature engineering notebook: `notebooks/02_feature_engineering.ipynb`  
+   Uses helper functions from `src/features/` to create distance & time features, saves to `data/processed/`.  
+4. (Optional) Modeling notebook: `notebooks/03_modeling.ipynb`  
+   Trains baseline models and reports metrics.  
+
+> If your data file names/paths differ, edit the path cell at the top of each notebook.
+
+## 📦 Project Structure
+
+trip-duration-prediction/  
+├── config/  
+│   └── params.yaml  
+├── data/  
+│   ├── raw/  
+│   ├── processed/  
+│   └── external/  
+├── notebooks/  
+│   └── 01_Trip Duration EDA.ipynb
+|   └── 02_feature_engineering.ipynb
+|   └── 03_modeling.ipynb
+├── src/  
+│   ├── data/  
+│   │   └── dataset.py  
+│   ├── features/  
+│   │   ├── distances.py  
+│   │   └── timeparts.py  
+│   ├── models/  
+│   │   └── train.py  
+│   └── visualization/  
+│       └── eda_helpers.py  
+├── scripts/  
+├── tests/  
+├── .gitignore  
+├── Makefile  
+├── requirements.txt  
+└── README.md  
+
+## 📑 Dataset Schema
+
+| Column | Meaning |
+|--------|--------|
+| id | Unique trip identifier |
+| vendor_id | Provider code for the trip |
+| pickup_datetime | When meter was engaged |
+| dropoff_datetime | When meter was disengaged |
+| passenger_count | Number of passengers (driver-entered) |
+| pickup_longitude | Longitude at pickup |
+| pickup_latitude | Latitude at pickup |
+| dropoff_longitude | Longitude at dropoff |
+| dropoff_latitude | Latitude at dropoff |
+| store_and_fwd_flag | Y if buffered offline and forwarded later; N otherwise |
+| trip_duration | Target – duration in seconds |
+
+> Adapt names in the notebook or `src/data/dataset.py` if your dataset differs.
+
+## 🧰 Setup
+
+Requirements: Python 3.9+, pip, Jupyter, VS Code (optional).  
+
+1. Create & activate a virtual environment:
+
+```text
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux:
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
 source .venv/bin/activate
 pip install -U pip
 pip install -r requirements.txt
 ```
 
-2) **بدء EDA**:
-- افتح VS Code في مجلد المشروع.
-- افتح `notebooks/01_eda_trip_duration.ipynb` وامشي على الاهداف/الـTODOs.
-- خليك ماشي على مبدأ: أسئلة → رسوم/جداول → استنتاجات قصيرة.
+1. Place your raw CSV(s) under `data/raw/` (e.g., `train.csv`).
 
-3) **تتبع بالإصدار (GitHub)**:
+## ▶️ Reproduce the EDA
+
+1. Open VS Code at project root (`code .`).  
+2. Open `notebooks/01_Trip Duration EDA.ipynb`.  
+3. Edit config cell if paths differ.  
+4. Run all cells to get:  
+   - Data shape & schema checks  
+   - Missing values/outliers scans  
+   - Coordinate sanity  
+   - Time-based distributions  
+   - Target distribution & log-transform  
+   - Initial feature ideas  
+
+> Raw data stays untouched; processed outputs go to `data/processed/`.
+
+## 🧪 Planned Feature Engineering
+
+**Distance & geometry:** `haversine_km`, `manhattan_km`, `bearing_deg`, `pickup_dropoff_same_cell`  
+**Temporal:** `pickup_hour`, `pickup_dow`, `pickup_month`, `weather`,`is_weekend`, `is_rush_hour`, `is_holiday`  
+**Speed proxies:** `approx_speed_kmh = distance_km / (trip_duration_hours)`  
+
+> Functions: `src/features/distances.py` & `src/features/timeparts.py`
+
+## 📈 Modeling Plan
+
+- **Baseline:** Linear Regression, Ridge, Lasso  
+- **Targets:** `trip_duration` vs `log(trip_duration)`  
+- **Validation:** Time-aware split / KFold  
+- **Metrics:** RMSE / MAE  
+- **Error analysis:** Residuals vs features, slice analysis  
+
+## 🔄 Workflow
+
 ```bash
-git init
+# Activate env
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # macOS/Linux
+
+# Pull changes
+git pull
+
+# Run EDA
+jupyter notebook
+
+# Commit
 git add .
-git commit -m "chore: init trip-duration-prediction skeleton"
-# انشئ Repo على GitHub ثم اربطه:
-git branch -M main
-git remote add origin <YOUR_GITHUB_REPO_URL>
-git push -u origin main
-```
-- اشتغل دائمًا على فروع مميزة للمهام:
-```bash
-git checkout -b feature/eda-basic
-# شغل… ثم:
-git add -A
-git commit -m "feat(eda): overview & sanity checks"
-git push -u origin feature/eda-basic
-# افتح Pull Request وادمجه بعد المراجعة الذاتية.
+git commit -m "eda: add distance features & time breakdown"
+git push
+
+# Optional feature branch
+git checkout -b feature/fe-distances
+git push -u origin feature/fe-distances
 ```
 
-## سياسة البيانات
-- **لا ترفع** ملفات كبيرة أو البيانات الخام للعامة (ضعها في `data/raw/` وموجودة في .gitignore).
-- ارفع فقط الأكواد والملفات النصية المفيدة للتتبع.
+## 🔐 Data Policy
 
-## الخطوات القادمة (Checklist)
-- [ ] وضع البيانات الخام داخل `data/raw/`
-- [ ] فتح النوتبوك `01_eda_trip_duration.ipynb`
-- [ ] كتابة قائمة أسئلة الـEDA قبل التنفيذ
-- [ ] تنفيذ فحوصات السلامة للبيانات (قيم ناقصة/قيم شاذة/نطاق الإحداثيات)
-- [ ] توليد ميزات أولية (المسافات، الوقت) **بدون نموذج** كبداية
-- [ ] توثيق الاستنتاجات بنقاط موجزة أسفل كل قسم
+- Never commit raw/large data (`data/raw/`)  
+- Commit only code, configs, small artifacts  
+- External sources under `data/external/`
+
+## 🗺️ Roadmap
+
+- Add `02_feature_engineering.ipynb` & `03_modeling.ipynb`  
+- Wire `train.py` to pipeline  
+- Optional: integrate holidays/weather  
+- Unit tests for distances/timeparts  
+- Sample plots under `docs/images/`
+
+## 🙋 FAQ
+
+**Dataset location:** `data/raw/`  
+**First file to open:** `01_Trip Duration EDA.ipynb`  
+**Where do features come from?** Generated via `src/features/`  
+**Run without VS Code?** Yes, use Jupyter  
+
+**License:** MIT  
+**Issues:** Open a GitHub Issue with steps to reproduce.
