@@ -39,6 +39,7 @@ def add_distance_features(df: pd.DataFrame) -> pd.DataFrame:
         c = 2 * np.arcsin(np.sqrt(a))
         km = 6371 * c
         return km
+    
 
     df["haversine_km"] = haversine_array(
         df["pickup_longitude"], df["pickup_latitude"],

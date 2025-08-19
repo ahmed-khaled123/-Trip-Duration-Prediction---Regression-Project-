@@ -1,6 +1,5 @@
-# إعدادات عامة للمشروع (املأها بنفسك لاحقًا)
 eda:
-  sample_rows: 5000   # مثال: حجم العينة الأولي للمعاينة
+  sample_rows: 5000   
 features:
   distances: [haversine, manhattan, bearing]
   time_parts: [hour, weekday, month, is_weekend, is_rush_hour]
