@@ -26,7 +26,7 @@ scaler_type = "minmax"
 target_col = "log_trip_duration_min"
 
 # =================== TRAIN + VAL PIPELINE ===================
-def run_model_pipeline(train_df, val_df, target_col, model, scaler_type="standard", selected_metrics=None):
+def run_model_pipeline(train_df, val_df, target_col, model, scaler_type="minmax", selected_metrics=None):
     """
     Full pipeline: split, scale, train, evaluate.
     Returns trained model, metrics dict, y_train_pred, y_val_pred
@@ -66,7 +66,7 @@ if test_metrics:
         print(f"  {metric}: {value:.4f}")
 
 print("\n=== Test Predictions vs True Values (first 10 rows) ===")
-print(test_df[['trip_duration_min', 'pred_trip_duration_min']].head(10))
+print(test_df[['trip_duration_min', 'pred_trip_duration_min']].head(20).max ())
 
 
 
