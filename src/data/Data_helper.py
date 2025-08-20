@@ -1,15 +1,22 @@
 import pandas as pd
 import os
 
-def load_raw_data(filename="train.csv"):
+def load_data(filepath):
     """
-    Load raw CSV from data/raw/
+    Load a CSV file given its full path.
+    
+    Parameters:
+        filepath (str): Full path to the CSV file (train/val/test, raw or processed)
+    
+    Returns:
+        pd.DataFrame: loaded dataframe
     """
-    filepath = os.path.join("data", "raw", filename)
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"File not found: {filepath}")
+    
     df = pd.read_csv(filepath)
     return df
+
 
 
 def validate_dataset(df):
@@ -61,4 +68,20 @@ def save_processed_data(df, path):
     
     df.to_csv(path, index=False)
     print(f" Processed data saved to {path}")
+
+def inspect_data(train_df, val_df, target_col):
+    print("=== TRAIN DATA ===")
+    print(train_df.head())
+    print(train_df.info())
+    print(train_df.describe(include='all'))
+    print(f"{target_col} range: min={train_df[target_col].min()}, max={train_df[target_col].max()}\n")
+    
+    print("=== VAL DATA ===")
+    print(val_df.head())
+    print(val_df.info())
+    print(val_df.describe(include='all'))
+    if target_col in val_df.columns:
+        print(f"{target_col} range: min={val_df[target_col].min()}, max={val_df[target_col].max()}\n")
+    else:
+        print(f"{target_col} not in validation data.\n")
 

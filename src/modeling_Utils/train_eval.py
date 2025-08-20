@@ -1,5 +1,7 @@
+import pandas as pd
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import numpy as np
+
 
 def train_model(model, X_train, y_train):
     """
@@ -51,6 +53,58 @@ def evaluate_model(model, X_train, y_train, X_val, y_val, selected_metrics=None)
         metrics["val"][m] = func(y_val, y_pred_val)
 
     return metrics, y_pred_train, y_pred_val
+
+
+
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import pandas as pd
+import numpy as np
+
+import numpy as np
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import pandas as pd
+
+def test_model(model, scaler, test_df, target_col="trip_duration_min"):
+    """
+    Evaluate a trained model on the test set.
+    
+    Parameters:
+        model : trained sklearn model
+        scaler : fitted scaler used on train
+        test_df : pd.DataFrame with test data (log column should exist if used)
+        target_col : name of the target column in minutes
+    
+    Returns:
+        test_df : with added column 'pred_trip_duration_min'
+        metrics : dict with MAE, RMSE, R2 if target exists
+    """
+    # Prepare test features
+    X_test = test_df.copy()
+    X_test = X_test[model.feature_names_in_]  # ترتيب الأعمدة زي train
+    X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_test.columns, index=X_test.index)
+
+    # Predict log values if موجود
+    if "log_" + target_col in test_df.columns:
+        y_test_pred_log = model.predict(X_test_scaled)
+        y_test_pred_log = np.clip(y_test_pred_log, a_min=None, a_max=20) # Clip to avoid extreme values
+        y_test_pred = np.expm1(y_test_pred_log)
+    else:
+        y_test_pred = model.predict(X_test_scaled)
+    
+    # ضيف predictions للـ test dataframe
+    test_df['pred_trip_duration_min'] = y_test_pred
+
+    metrics = {}
+    if target_col in test_df.columns:
+        y_true = test_df[target_col]
+        mae = mean_absolute_error(y_true, y_test_pred)
+        rmse = np.sqrt(mean_squared_error(y_true, y_test_pred))
+        r2 = r2_score(y_true, y_test_pred)
+        metrics = {"test": {"MAE": mae, "RMSE": rmse, "R2": r2}}
+    
+    return test_df, metrics
+
+
 
 def print_metrics(metrics):
     """ Print metrics in a readable format. """
