@@ -64,44 +64,33 @@ import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import pandas as pd
 
-def test_model(model, scaler, test_df, target_col="trip_duration_min"):
+def test_model(model, scaler, test_df, target_col="log_trip_duration"):
     """
     Evaluate a trained model on the test set.
-    
-    Parameters:
-        model : trained sklearn model
-        scaler : fitted scaler used on train
-        test_df : pd.DataFrame with test data (log column should exist if used)
-        target_col : name of the target column in minutes
-    
-    Returns:
-        test_df : with added column 'pred_trip_duration_min'
-        metrics : dict with MAE, RMSE, R2 if target exists
     """
     # Prepare test features
     X_test = test_df.copy()
-    X_test = X_test[model.feature_names_in_]  # ترتيب الأعمدة زي train
+    X_test = X_test[model.feature_names_in_]
     X_test_scaled = pd.DataFrame(scaler.transform(X_test), columns=X_test.columns, index=X_test.index)
 
-    # Predict log values if موجود
-    if "log_" + target_col in test_df.columns:
-        y_test_pred_log = model.predict(X_test_scaled)
-        y_test_pred_log = np.clip(y_test_pred_log, a_min=None, a_max=20) # Clip to avoid extreme values
-        y_test_pred = np.expm1(y_test_pred_log)
-    else:
-        y_test_pred = model.predict(X_test_scaled)
-    
-    # ضيف predictions للـ test dataframe
-    test_df['pred_trip_duration_min'] = y_test_pred
+    # Predict log values
+    y_test_pred_log = model.predict(X_test_scaled)
+    y_test_pred_log = np.clip(y_test_pred_log, a_min=None, a_max=15)
 
+    if "log_trip_duration" not in test_df.columns:
+        test_df["log_trip_duration"] = np.log1p(test_df["trip_duration"])
+    # ضيف predictions
+    test_df['pred_log_trip_duration'] = y_test_pred_log   # الاسم يبقى واضح
+
+    # لو العمود target_col مش موجود مش هتحسب metrics
     metrics = {}
     if target_col in test_df.columns:
         y_true = test_df[target_col]
-        mae = mean_absolute_error(y_true, y_test_pred)
-        rmse = np.sqrt(mean_squared_error(y_true, y_test_pred))
-        r2 = r2_score(y_true, y_test_pred)
+        mae = mean_absolute_error(y_true, y_test_pred_log)
+        rmse = np.sqrt(mean_squared_error(y_true, y_test_pred_log))
+        r2 = r2_score(y_true, y_test_pred_log)
         metrics = {"test": {"MAE": mae, "RMSE": rmse, "R2": r2}}
-    
+
     return test_df, metrics
 
 
