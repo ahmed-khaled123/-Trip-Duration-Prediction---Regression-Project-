@@ -10,7 +10,7 @@ from modeling_Utils.data_split import split_features_target
 from modeling_Utils.scaling import scale_data
 from modeling_Utils.train_eval_test import train_model, evaluate_model, print_metrics, test_model
 from models.model_pipeline import run_model_pipeline
-from data.Data_helper import load_data
+from data_Utils.Data_helper import load_data
 
 # =================== LOAD DATA ===================
 train_df = load_data(r"G:\ML mostafa saad\slides\my work\13 Project 1 - Regression - Trip Duration Prediction\data\processed\train_processed_filtered.csv")
