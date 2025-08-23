@@ -6,9 +6,7 @@ from sklearn.neighbors import KNeighborsRegressor
 # Allow Python to access the src folder
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from modeling_Utils.data_split import split_features_target
-from modeling_Utils.scaling import scale_data
-from modeling_Utils.train_eval_test import train_model, evaluate_model, print_metrics, test_model
+from modeling_Utils.train_eval_test import  print_metrics, test_model
 from models.model_pipeline import run_model_pipeline
 from data.Data_helper import load_data
 
@@ -23,7 +21,7 @@ knn_model = KNeighborsRegressor(
     weights='distance',
     p=2  # Euclidean
 )
-scaler_type = "minmax"  # مهم جدًا للـ KNN
+scaler_type = "minmax"  # very important for KNN
 target_col = "log_trip_duration"
 
 trained_model, scaler, metrics, y_train_pred, y_val_pred = run_model_pipeline(

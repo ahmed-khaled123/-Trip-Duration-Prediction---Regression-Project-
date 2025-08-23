@@ -3,12 +3,10 @@ import os
 import pandas as pd
 from xgboost import XGBRegressor
 
-# السماح للبايثون يوصل للمجلدات utils
+# Allow Python to access the src folder
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from modeling_Utils.data_split import split_features_target
-from modeling_Utils.scaling import scale_data
-from modeling_Utils.train_eval_test import train_model, evaluate_model, print_metrics, test_model
+from modeling_Utils.train_eval_test import  print_metrics, test_model
 from models.model_pipeline import run_model_pipeline
 from data.Data_helper import load_data
 
@@ -19,16 +17,16 @@ test_df  = load_data(r"G:\ML mostafa saad\slides\my work\13 Project 1 - Regressi
 
 # =================== MODEL PIPELINE ===================
 xgb_model = XGBRegressor(
-    n_estimators=500,      # عدد الأشجار
-    learning_rate=0.05,    # معدل التعلم
-    max_depth=6,            # أقصى عمق للشجرة
-    subsample=0.8,          # أخذ عينات من البيانات لكل شجرة
-    colsample_bytree=0.8,   # أخذ عينات من الأعمدة لكل شجرة
+    n_estimators=500,     
+    learning_rate=0.05,
+    max_depth=6,           
+    subsample=0.8,         
+    colsample_bytree=0.8,  
     random_state=42,
     n_jobs=-1
 )
 
-scaler_type = "minmax"  # مش ضروري مع XGBoost، بس لو البايبلاين محتاجه نخليه زي البقية
+scaler_type = "minmax"  
 target_col = "log_trip_duration"
 
 trained_model, scaler, metrics, y_train_pred, y_val_pred = run_model_pipeline(
