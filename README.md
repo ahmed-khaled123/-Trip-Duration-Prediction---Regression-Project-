@@ -31,18 +31,19 @@ trip-duration-prediction/
 |   └── 02_feature_engineering.ipynb
 |   └── 03_modeling.ipynb
 ├── src/  
-│   ├── data/  
-│   │   └── dataset.py  
+│   ├── data_Utils/  
+│   │   └── data_helper_.py  
 │   ├── features/  
 │   │   ├── distances.py  
 │   │   └── timeparts.py  
+│   │   └── encoding.py  
 │   ├── models/  
-│   │   └── train.py  
-│   └── visualization/  
-│       └── eda_helpers.py  
-├── scripts/  
-├── tests/  
-├── .gitignore  
+│   │   └── KNN.py  
+│   │   └── LR.py  
+│   │   └── Ridge.py  
+│   │   └── XGBoost.py  
+├── .gitignore
+├── .LICENSE  
 ├── Makefile  
 ├── requirements.txt  
 └── README.md  
@@ -63,8 +64,6 @@ trip-duration-prediction/
 | store_and_fwd_flag | Y if buffered offline and forwarded later; N otherwise |
 | trip_duration | Target – duration in seconds |
 
-> Adapt names in the notebook or `src/data/dataset.py` if your dataset differs.
-
 ## 🧰 Setup
 
 Requirements: Python 3.9+, pip, Jupyter, VS Code (optional).  
@@ -81,7 +80,7 @@ pip install -U pip
 pip install -r requirements.txt
 ```
 
-1. Place your raw CSV(s) under `data/raw/` (e.g., `train.csv`).
+1. Place your raw CSV(s) under `data/raw/` ( `train.csv`).
 
 ## ▶️ Reproduce the EDA
 
@@ -94,7 +93,7 @@ pip install -r requirements.txt
    - Coordinate sanity  
    - Time-based distributions  
    - Target distribution & log-transform  
-   - Initial feature ideas  
+   - Initial feature ideas and so on
 
 > Raw data stays untouched; processed outputs go to `data/processed/`.
 
@@ -106,13 +105,17 @@ pip install -r requirements.txt
 
 > Functions: `src/features/distances.py` & `src/features/timeparts.py`
 
-## 📈 Modeling Plan
+## 📂 Project Steps
 
-- **Baseline:** Linear Regression, Ridge, Lasso  
-- **Targets:** `trip_duration` vs `log(trip_duration)`  
-- **Validation:** Time-aware split / KFold  
-- **Metrics:** RMSE / MAE  
-- **Error analysis:** Residuals vs features, slice analysis  
+1. **EDA (Initial)**  
+2. **Feature Engineering**  
+3. **EDA (with new features)**  
+4. **Modeling**  
+   - Baseline: Linear Regression, Ridge, KNN, XGBoost  
+   - Targets: `trip_duration` vs `log(trip_duration)`  
+   - Validation: Time-aware split  
+   - Metrics: RMSE / MAE / R2  
+   - Error Analysis: Residuals & slice analysis  
 
 ## 🔄 Workflow
 
@@ -149,7 +152,6 @@ git push -u origin feature/fe-distances
 - Wire `train.py` to pipeline  
 - Optional: integrate holidays/weather  
 - Unit tests for distances/timeparts  
-- Sample plots under `docs/images/`
 
 ## 🙋 FAQ
 
@@ -158,5 +160,4 @@ git push -u origin feature/fe-distances
 **Where do features come from?** Generated via `src/features/`  
 **Run without VS Code?** Yes, use Jupyter  
 
-**License:** MIT  
 **Issues:** Open a GitHub Issue with steps to reproduce.
