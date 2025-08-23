@@ -7,7 +7,7 @@ from xgboost import XGBRegressor
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from modeling_Utils.train_eval_test import  print_metrics, test_model
-from models.model_pipeline import run_model_pipeline
+from modeling_Utils.model_pipeline import run_model_pipeline
 from data_Utils.Data_helper import load_data
 
 # =================== LOAD DATA ===================
