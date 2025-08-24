@@ -10,9 +10,9 @@ Target variable: `trip_duration` (in seconds).
 1. This file `README.md` – 2-minute overview.  
 2. EDA notebook: `notebooks/01_Trip Duration EDA.ipynb`  
    Run top-to-bottom. It loads data from `data/raw/` and performs sanity checks, profiling, and first plots.  
-3. (Optional) Feature engineering notebook: `notebooks/02_feature_engineering.ipynb`  
+3. Feature engineering notebook: `notebooks/02_feature_engineering.ipynb`  
    Uses helper functions from `src/features/` to create distance & time features, saves to `data/processed/`.  
-4. (Optional) Modeling notebook: `notebooks/03_modeling.ipynb`  
+4. Modeling notebook: `notebooks/03_modeling.ipynb`  
    Trains baseline models and reports metrics.  
 
 > If your data file names/paths differ, edit the path cell at the top of each notebook.
@@ -145,13 +145,6 @@ git push -u origin feature/fe-distances
 - Never commit raw/large data (`data/raw/`)  
 - Commit only code, configs, small artifacts  
 - External sources under `data/external/`
-
-## 🗺️ Roadmap
-
-- Add `02_feature_engineering.ipynb` & `03_modeling.ipynb`  
-- Wire `train.py` to pipeline  
-- Optional: integrate holidays/weather  
-- Unit tests for distances/timeparts  
 
 ## 🙋 FAQ
 
